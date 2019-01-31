@@ -1,44 +1,44 @@
 package pl.tscript3r.makao.domain.cards;
 
+import pl.tscript3r.makao.consts.CardValues;
+import pl.tscript3r.makao.utility.CardToStringTranslator;
+
 import java.security.InvalidParameterException;
 
-import pl.tscript3r.makao.consts.CardsValues;
-import pl.tscript3r.makao.utility.CardStringTranslator;
-
 public class Card implements Comparable<Card> {
-	
-	protected static int cardId = 0;
-	protected byte number;
-	protected String color;
-	protected int id;
-	
-	public Card(byte cardNumber, String cardColor) {
-		id = cardId++;
-		if(cardNumber > CardsValues.CARD_MAX_VALUE || cardNumber < CardsValues.CARD_MIN_VALUE)
-			throw new InvalidParameterException("Card number out of range");
-		this.number = cardNumber;
-		this.color = cardColor;
-	}
-	
-	public String getName() {
-		return "[" + CardStringTranslator.getName(this) + color + "]";
-	}
 
-	public byte getNumber() {
-		return number;
-	}
-	
-	public String getColor() {
-		return color;
-	}
-	
-	public int getId() {
-		return id;
-	}
+    private static int cardId = 0;
+    private final int id;
+    private byte number;
+    private String color;
 
-	@Override
-	public int compareTo(Card arg0) {
-		return this.getNumber() - arg0.getNumber();
-	}
+    public Card(byte cardNumber, String cardColor) {
+        id = cardId++;
+        if (cardNumber > CardValues.CARD_MAX_VALUE || cardNumber < CardValues.CARD_MIN_VALUE)
+            throw new InvalidParameterException("Card number out of range");
+        this.number = cardNumber;
+        this.color = cardColor;
+    }
+
+    public String getCardName() {
+        return "[" + CardToStringTranslator.getName(this) + color + "]";
+    }
+
+    public byte getCardNumber() {
+        return number;
+    }
+
+    public String getCardColor() {
+        return color;
+    }
+
+    public int getCardId() {
+        return id;
+    }
+
+    @Override
+    public int compareTo(Card arg0) {
+        return this.getCardNumber() - arg0.getCardNumber();
+    }
 
 }

@@ -1,125 +1,114 @@
 package pl.tscript3r.makao.collections;
 
-import pl.tscript3r.makao.consts.CardsValues;
+import pl.tscript3r.makao.consts.CardValues;
 import pl.tscript3r.makao.domain.cards.Card;
 
 public class GameCardDeckContainer extends CardDeckContainer {
-	private int demandPlayerId = -1;
-	private byte demandNumber = 0;
-	private int sleepCount = 0;
+    private int demandPlayerId = -1;
+    private byte demandNumber = 0;
+    private int sleepCount = 0;
 
-	private int pickCount = 1;
-	private Boolean pickEvent = false;
-	private Boolean sleepEvent = false;
-	private Boolean demandEvent = false;
-	private Boolean demandApplied = false;
+    private int pickCount = 1;
+    private Boolean pickEvent = false;
+    private Boolean sleepEvent = false;
+    private Boolean demandEvent = false;
 
-	private Boolean isPickCard(Card card) {
-		for (byte cardNumber : CardsValues.CARDS_PICK_LIST) {
-			if (card.getNumber() == cardNumber)
-				return true;
-			if (card.getNumber() == CardsValues.CARD_KING)
-				for (String cardColor : CardsValues.CARDS_COLOR_LIST)
-					if (cardColor.equals(card.getColor()))
-						return true;
-		}
-		return false;
-	}
+    private Boolean isPickCard(Card card) {
+        for (byte cardNumber : CardValues.CARDS_PICK_LIST) {
+            if (card.getCardNumber() == cardNumber)
+                return true;
+            if (card.getCardNumber() == CardValues.CARD_KING)
+                for (String cardColor : CardValues.CARDS_COLOR_LIST)
+                    if (cardColor.equals(card.getCardColor()))
+                        return true;
+        }
+        return false;
+    }
 
-	public void addCard(int playersId, Card card) {
-		if (demandEvent)
-			if (playersId == demandPlayerId) {
-				// end of the event
-				demandEvent = false;
-				demandApplied = false;
-				demandNumber = 0;
-				demandPlayerId = -1;
-			} else
-				if (card.getNumber() == demandNumber) 
-					demandApplied = true;
+    public void addCard(int playersId, Card card) {
 
-		if (card.getNumber() == CardsValues.CARD_SLEEP) {
-			sleepCount++;
-			sleepEvent = true;
-		}
+        if (demandEvent)
+            if (playersId == demandPlayerId) {
+                // end of the demand event
+                demandEvent = false;
+                demandNumber = 0;
+                demandPlayerId = -1;
+            }
 
-		if (isPickCard(card)) {
-			pickEvent = true;
-			switch (card.getNumber()) {
-			case CardsValues.CARD_TWO:
-				pickCount += 2;
-				break;
-			case CardsValues.CARD_THREE:
-				pickCount += 3;
-				break;
-			case CardsValues.CARD_KING:
-				for (String color : CardsValues.CARDS_PICK_KING_COLORS)
-					if (card.getColor().equals(color))
-						pickCount += 5;	
-			}
-		}
+        if (card.getCardNumber() == CardValues.CARD_SLEEP) {
+            sleepCount++;
+            sleepEvent = true;
+        }
 
-		super.addCard(card);
-	}
+        if (isPickCard(card)) {
+            pickEvent = true;
+            switch (card.getCardNumber()) {
+                case CardValues.CARD_TWO:
+                    pickCount += 2;
+                    break;
+                case CardValues.CARD_THREE:
+                    pickCount += 3;
+                    break;
+                case CardValues.CARD_KING:
+                    for (String color : CardValues.CARDS_PICK_KING_COLORS)
+                        if (card.getCardColor().equals(color))
+                            pickCount += 5;
+            }
+        }
 
-	@Override
-	public Card getFirstCard() {
-		if (!deck.isEmpty())
-			return deck.get(deck.size() - 1);
-		else
-			return null;
-	}
+        super.addCard(card);
+    }
 
-	public Boolean isPickEvent() {
-		return pickEvent;
-	}
+    public Card getFirstCard() {
+        if (!deck.isEmpty())
+            return deck.get(deck.size() - 1);
+        else
+            return null;
+    }
 
-	public Boolean isSleepEvent() {
-		return sleepEvent;
-	}
+    public Boolean isPickGameEvent() {
+        return pickEvent;
+    }
 
-	public int getSleepCount() {
-		int tmp = sleepCount;
-		sleepCount = 0;
-		sleepEvent = false;
-		return tmp;
-	}
+    public Boolean isSleepGameEvent() {
+        return sleepEvent;
+    }
 
-	public int getPickCount() {
-		return (pickCount > 1) ? pickCount - 1 : pickCount;
-	}
-	
-	public void setPicketUp() {
-		if (pickEvent) {
-			// Default has to be 1
-			pickCount = 1;
-			pickEvent = false;
-		}	
-	}
+    public int getSleepCount() {
+        int tmp = sleepCount;
+        sleepCount = 0;
+        sleepEvent = false;
+        return tmp;
+    }
 
-	public Boolean isDemandEvent() {
-		return demandEvent;
-	}
+    public int getPickCount() {
+        return (pickCount > 1) ? pickCount - 1 : pickCount;
+    }
 
-	public Boolean isDemandApplied() {
-		return demandApplied;
-	}
+    public void setPicketUp() {
+        if (pickEvent) {
+            // Default has to be 1
+            pickCount = 1;
+            pickEvent = false;
+        }
+    }
 
-	public byte getDemandNumber() {
-		return demandNumber;
-	}
+    public Boolean isDemandGameEvent() {
+        return demandEvent;
+    }
 
-	public void setDemandNumber(int playersId, byte number) {
-		demandEvent = true;
-		demandNumber = number;
-		demandPlayerId = playersId;
-	}
+    public byte getDemandNumber() {
+        return demandNumber;
+    }
 
-	public Boolean isAnyEvent() {
-		if (!isPickEvent() && !isSleepEvent() && !isDemandEvent())
-			return false;
-		else
-			return true;
-	}
+    public void setDemandNumber(int playersId, byte number) {
+        demandEvent = true;
+        demandNumber = number;
+        demandPlayerId = playersId;
+    }
+
+    public Boolean isAnyGameEvent() {
+        return (isPickGameEvent() || isSleepGameEvent() || isDemandGameEvent());
+    }
 
 }

@@ -8,55 +8,49 @@ import pl.tscript3r.makao.utility.Printer;
 
 public abstract class Player {
 
-	protected static int id = 0;
-	protected int playersId = 0;
-	protected int sleepRounds = 0;
-	protected String name;
-	protected CardDeckContainer cardsDeck;
-	protected CardDeckContainer ownDeck = new CardDeckContainer();
-	protected GameCardDeckContainer gameDeck;
-	protected MovesOptions movesOptions;
+    private static int id = 0;
+    private final int playersId;
+    int sleepRounds = 0;
+    final String name;
+    final CardDeckContainer ownDeck = new CardDeckContainer();
+    final GameCardDeckContainer gameDeck;
+    final MovesOptionImpl movesOptionImpl;
 
-	public Player(String playerName, GameCardDeckContainer gameDeck, CardDeckContainer cardsDeck) {
-		this.playersId = id++;
-		this.name = playerName;
-		this.gameDeck = gameDeck;
-		this.cardsDeck = cardsDeck;
-		movesOptions = new MovesOptions(this, gameDeck, ownDeck, cardsDeck);
-	}
+    Player(String playerName, GameCardDeckContainer gameDeck, CardDeckContainer cardsDeck) {
+        this.playersId = id++;
+        this.name = playerName;
+        this.gameDeck = gameDeck;
+        movesOptionImpl = new MovesOptionImpl(this, gameDeck, ownDeck, cardsDeck);
+    }
 
-	public String getName() {
-		return name;
-	}
-	
-	public void setSleepRounds(int sleepRounds) {
-		this.sleepRounds = sleepRounds;
-		Printer.printMessage(
-				"Player " + name + "skips " + Integer.toString(sleepRounds) + " rounds.\r\n");
-	}
-	
-	public Boolean hasWon() {
-		return ownDeck.isEmpty();
-	}
-	
-	public void clearDeck() {
-		ownDeck.clearDeck();
-	}
-	
-	public int getId() {
-		return playersId;
-	}
-	
-	public void addCard(Card card) {
-		ownDeck.addCard(card);
-		ownDeck.sort();
-	}
-	
-	protected String getCardsList() {
-		return ownDeck.getCardsList();
-	}
+    public void setSleepRounds(int sleepRounds) {
+        this.sleepRounds = sleepRounds;
+        Printer.printMessage(
+                "Player " + name + "skips " + sleepRounds + " rounds.\r\n");
+    }
 
-	public abstract void demandCard();
-	
-	public abstract void move();
+    public Boolean hasWon() {
+        return ownDeck.isEmpty();
+    }
+
+    public void clearDeck() {
+        ownDeck.clearDeck();
+    }
+
+    public int getId() {
+        return playersId;
+    }
+
+    public void addCard(Card card) {
+        ownDeck.addCard(card);
+        ownDeck.sortCards();
+    }
+
+    String getCardsList() {
+        return ownDeck.getCardsList();
+    }
+
+    public abstract void demandCard();
+
+    public abstract void move();
 }
